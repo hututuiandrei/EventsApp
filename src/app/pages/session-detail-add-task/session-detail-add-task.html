@@ -1,0 +1,21 @@
+<ion-header translucent="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+        <ion-button (click)="cancel()">Cancel</ion-button>
+        </ion-buttons>
+
+        <ion-title>
+        Add task
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <form #form="ngForm" (ngSubmit)="dismiss(task)">
+    <ion-item>
+        <ion-label>Task name :</ion-label>
+        <ion-input type="text" required [(ngModel)]="task.title" name="title"></ion-input>
+        <ion-button ion-button type="submit" block>Add</ion-button>
+    </ion-item>
+    </form>
+</ion-content>

@@ -6,6 +6,8 @@ import { ScheduleFilterPage } from '../schedule-filter/schedule-filter';
 import { ConferenceData } from '../../providers/conference-data';
 import { UserData } from '../../providers/user-data';
 
+import { AddEventPage } from '../schedule-add-event/schedule-add-event'
+
 @Component({
   selector: 'page-schedule',
   templateUrl: 'schedule.html',
@@ -22,8 +24,10 @@ export class SchedulePage implements OnInit {
   excludeTracks: any = [];
   shownSessions: any = [];
   groups: any = [];
+  selectedSession: any;
   confDate: string;
   showSearchbar: boolean;
+  showEventOptions: boolean;
 
   constructor(
     public alertCtrl: AlertController,
@@ -40,6 +44,7 @@ export class SchedulePage implements OnInit {
   ngOnInit() {
     this.updateSchedule();
 
+    this.showEventOptions = false;
     this.ios = this.config.get('mode') === 'ios';
   }
 
@@ -50,9 +55,74 @@ export class SchedulePage implements OnInit {
     }
 
     this.confData.getTimeline(this.dayIndex, this.queryText, this.excludeTracks, this.segment).subscribe((data: any) => {
+
       this.shownSessions = data.shownSessions;
       this.groups = data.groups;
     });
+  }
+
+  onLongPressEvent(session: any) {
+
+    this.selectedSession = session;
+    this.showEventOptions = true;
+  }
+
+  onBackEvent() {
+
+    this.showEventOptions = false;
+  }
+
+  async presentEventForm(event?: any) {
+
+    this.showEventOptions = false;
+
+    let locations = await this.confData.getLocations().toPromise();
+
+    const modal = await this.modalCtrl.create({
+      component: AddEventPage,
+      swipeToClose: true,
+      presentingElement: this.routerOutlet.nativeEl,
+      componentProps: event ? {
+
+        id: event.id,
+        name: event.name,
+        description: event.description,
+        location: event.location,
+        timeStart: event.timeStart,
+        timeEnd: event.timeEnd,
+        locations: locations
+      } :
+      {
+        locations: locations
+      }
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+    this.updateSchedule()
+  }
+
+  async presentDeleteEventAlert(id: string) {
+
+    const alert = await this.alertCtrl.create({
+      header: 'Confirm delete event',
+      message: 'Are you sure you want to permanently delete this event?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.confData.deleteSession(id);
+            this.updateSchedule();
+          }
+        }
+      ]
+    });
+    await alert.present()
+    await alert.onWillDismiss()
+    this.showEventOptions = false;
   }
 
   async presentFilter() {
@@ -107,14 +177,14 @@ export class SchedulePage implements OnInit {
           text: 'Cancel',
           handler: () => {
             // they clicked the cancel button, do not remove the session
-            // close the sliding item and hide the option buttons
+
             slidingItem.close();
           }
         },
         {
           text: 'Remove',
           handler: () => {
-            // they want to remove this session from their favorites
+
             this.user.removeFavorite(sessionData.name);
             this.updateSchedule();
 
@@ -126,6 +196,8 @@ export class SchedulePage implements OnInit {
     });
     // now present the alert on top of all other content
     await alert.present();
+
+    this.updateSchedule();
   }
 
   async openSocial(network: string, fab: HTMLIonFabElement) {

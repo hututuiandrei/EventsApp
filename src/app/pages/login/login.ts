@@ -34,4 +34,8 @@ export class LoginPage {
   onSignup() {
     this.router.navigateByUrl('/signup');
   }
+
+  onCancel() {
+    this.router.navigateByUrl('/app');
+  }
 }

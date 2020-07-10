@@ -1,0 +1,11 @@
+<ion-item *ngFor="let invitedPerson of invitedPeople">
+  <ion-chip>
+    <ion-avatar>
+      <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+    </ion-avatar>
+    <ion-label>{{invitedPerson.email}}</ion-label>
+    <ion-button *ngIf="!showSearchbar" (click)="deleteInvitedPerson(invitedPerson.idPerson)" fill="clear">
+      <ion-icon name="close-circle"></ion-icon>
+    </ion-button>
+  </ion-chip>
+</ion-item>

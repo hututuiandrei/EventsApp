@@ -13,6 +13,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { FormsModule } from '@angular/forms';
 
+import { IonicGestureConfig } from './utils/ionic-gesture-config'
+import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -23,10 +26,19 @@ import { FormsModule } from '@angular/forms';
     IonicStorageModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production
-    })
+    }),
   ],
   declarations: [AppComponent],
-  providers: [InAppBrowser, SplashScreen, StatusBar],
+  providers: [
+    InAppBrowser,
+    SplashScreen,
+    StatusBar,
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: IonicGestureConfig
+    },
+  ],
+  
   bootstrap: [AppComponent]
 })
 export class AppModule {}

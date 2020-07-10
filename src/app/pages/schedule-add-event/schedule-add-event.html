@@ -1,0 +1,77 @@
+<ion-header translucent="true">
+    <ion-toolbar>
+        <ion-buttons slot="start">
+        <ion-button (click)="cancel()">Cancel</ion-button>
+        </ion-buttons>
+
+        <ion-title>
+        Event
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <form #form="ngForm" (ngSubmit)="dismiss(event)">
+        <ion-item>
+            <ion-label>Event name :</ion-label>
+            <ion-input type="text" required [(ngModel)]="event.name" name="name"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label>Event description :</ion-label>
+            <ion-input type="text" required [(ngModel)]="event.description" name="description"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label>Event location :</ion-label>
+            <ion-select [(ngModel)]="event.location" name="location" okText="Okay" cancelText="Dismiss">
+                <ion-select-option *ngFor="let location of locations" value="{{location.name}}">{{location.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+
+        <ion-segment value="choose" (ionChange)="segmentChanged($event)">
+            <ion-segment-button value="choose">
+              <ion-label>Choose time</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="pick">
+              <ion-label>Pick time</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+
+        <ion-item *ngIf="choose && !noSpaceError">
+            <ion-label>Event start time :</ion-label>
+            <ion-input type="text" required [(ngModel)]="event.timeStart" name="timeStart"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="choose && !noSpaceError">
+            <ion-label>Event end time :</ion-label>
+            <ion-input type="" required [(ngModel)]="event.timeEnd" name="timeEnd"></ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="choose && noSpaceError">
+            <ion-label>Select from available intervals :</ion-label>
+            <ion-select name="freeIntervals" okText="Okay" cancelText="Dismiss" (ionChange)="onSelectInterval($event)">
+                <ion-select-option *ngFor="let freeInterval of freeIntervalsChoose" value="{{freeInterval.startTime}}-{{freeInterval.endTime}}">{{freeInterval.startTime}} - {{freeInterval.endTime}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item *ngIf="!choose">
+            <ion-label>Choose the time duration of your event :</ion-label>
+            <ion-select [(ngModel)]="timeEvent" name="timeDuration" okText="Okay" cancelText="Dismiss" (ionChange)="onChangeTimeEvent()">
+                <ion-select-option value="15">15 minutes</ion-select-option>
+                <ion-select-option value="30">30 minutes</ion-select-option>
+                <ion-select-option value="60">60 minutes</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item *ngIf="!choose">
+            <ion-label>Select from available intervals :</ion-label>
+            <ion-select name="freeIntervals" okText="Okay" cancelText="Dismiss" (ionChange)="onSelectInterval($event)">
+                <ion-select-option *ngFor="let freeInterval of freeIntervalsPick" value="{{freeInterval.startTime}}-{{freeInterval.endTime}}">{{freeInterval.startTime}} - {{freeInterval.endTime}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+
+        <ion-item slot="end">
+            <ion-button *ngIf="modifyEvent" ion-button type="submit" block>Modify</ion-button>
+            <ion-button *ngIf="!modifyEvent" ion-button type="submit" block>Add</ion-button>
+        </ion-item>
+    </form>
+</ion-content>

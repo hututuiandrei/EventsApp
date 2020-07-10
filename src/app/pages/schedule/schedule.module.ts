@@ -7,19 +7,26 @@ import { SchedulePage } from './schedule';
 import { ScheduleFilterPage } from '../schedule-filter/schedule-filter';
 import { SchedulePageRoutingModule } from './schedule-routing.module';
 
+import { AddEventPage } from '../schedule-add-event/schedule-add-event';
+
+import { LongPressModule } from 'ionic-long-press';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SchedulePageRoutingModule
+    SchedulePageRoutingModule,
+    LongPressModule
   ],
   declarations: [
     SchedulePage,
-    ScheduleFilterPage
+    ScheduleFilterPage,
+    AddEventPage
   ],
   entryComponents: [
-    ScheduleFilterPage
+    ScheduleFilterPage,
+    AddEventPage
   ]
 })
 export class ScheduleModule { }

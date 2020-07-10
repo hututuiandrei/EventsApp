@@ -1,0 +1,19 @@
+<ion-list>
+    <ion-item>
+      <ion-label color="primary">To do :</ion-label>
+    </ion-item>
+    <ion-item *ngFor="let task of sessionTasks | doneTasks:false">
+      <ion-label color="primary">{{task.name}}</ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="task.done"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+
+  <ion-item>
+    <ion-label color="dark">Done :</ion-label>
+  </ion-item>
+  <ion-item *ngFor="let task of sessionTasks | doneTasks:true">
+    <ion-label color="dark">{{task.name}}</ion-label>
+    <ion-checkbox slot="end" (ionChange)="doneTask(task)" [(ngModel)]="task.done"></ion-checkbox>
+  </ion-item>
+ </ion-list>

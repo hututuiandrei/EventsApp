@@ -9,7 +9,7 @@
             {
               "name": "Breakfast",
               "timeStart": "8:00 am",
-              "timeEnd": "9:00 am",
+              "timeEnd": "8:30 am",
               "location": "Dining Hall",
               "tracks": ["Food"],
               "id": "1"
@@ -17,28 +17,8 @@
           ]
         },
         {
-          "time": "9:15 am",
+          "time": "9:00 am",
           "sessions": [
-            {
-              "name": "Getting Started with Ionic",
-              "location": "Hall 2",
-              "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
-              "speakerNames": ["Ted Turtle"],
-              "timeStart": "9:30 am",
-              "timeEnd": "9:45 am",
-              "tracks": ["Ionic"],
-              "id": "2"
-            },
-            {
-              "name": "Ionic Tooling",
-              "location": "Executive Ballroom",
-              "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
-              "speakerNames": ["Rachel Rabbit"],
-              "timeStart": "9:45 am",
-              "timeEnd": "10:00 am",
-              "tracks": ["Tooling"],
-              "id": "3"
-            },
             {
               "name": "University of Ionic",
               "location": "Hall 3",
@@ -48,6 +28,16 @@
               "timeEnd": "9:30 am",
               "tracks": ["Ionic"],
               "id": "4"
+            },
+            {
+              "name": "Getting Started with Ionic",
+              "location": "Hall 2",
+              "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
+              "speakerNames": ["Ted Turtle"],
+              "timeStart": "9:30 am",
+              "timeEnd": "9:45 am",
+              "tracks": ["Ionic"],
+              "id": "2"
             }
           ]
         },
@@ -79,8 +69,8 @@
               "location": "Hall 2",
               "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
               "speakerNames": ["Isabella Iguana", "Eva Eagle"],
-              "timeStart": "10:15 am",
-              "timeEnd": "10:30 am",
+              "timeStart": "10:30 am",
+              "timeEnd": "10:45 am",
               "tracks": ["Design"],
               "id": "7"
             },
@@ -105,7 +95,7 @@
               "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
               "speakerNames": ["Karl Kitten", "Lionel Lion"],
               "timeStart": "11:00 am",
-              "timeEnd": "11:45 am",
+              "timeEnd": "11:30 am",
               "tracks": ["Workshop"],
               "id": "9"
             },
@@ -115,7 +105,7 @@
               "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
               "speakerNames": ["Lionel Lion", "Gino Giraffe"],
               "timeStart": "11:30 am",
-              "timeEnd": "11:50 am",
+              "timeEnd": "11:45 am",
               "tracks": ["Communication"],
               "id": "10"
             },
@@ -124,24 +114,10 @@
               "location": "Grand Ballroom A",
               "description": "Mobile devices and browsers are now advanced enough that developers can build native-quality mobile apps using open web technologies like HTML5, Javascript, and CSS. In this talk, we’ll provide background on why and how we created Ionic, the design decisions made as we integrated Ionic with Angular, and the performance considerations for mobile platforms that our team had to overcome. We’ll also review new and upcoming Ionic features, and talk about the hidden powers and benefits of combining mobile app development and Angular.",
               "speakerNames": ["Rachel Rabbit", "Eva Eagle"],
-              "timeStart": "11:30 am",
+              "timeStart": "11:45 am",
               "timeEnd": "12:00 pm",
               "tracks": ["Navigation"],
               "id": "11"
-            }
-          ]
-        },
-        {
-          "time": "12:00 pm",
-          "sessions": [
-            {
-              "name": "Lunch",
-              "location": "Dining Hall",
-              "description": "Come grab lunch with all the Ionic fanatics and talk all things Ionic",
-              "timeStart": "12:00 pm",
-              "timeEnd": "1:00 pm",
-              "tracks": ["Food"],
-              "id": "12"
             }
           ]
         },
@@ -216,7 +192,7 @@
           ]
         },
         {
-          "time": "3:00",
+          "time": "3:00 pm",
           "sessions": [
             {
               "name": "Angular Directives in Ionic",
@@ -462,6 +438,88 @@
     {
       "name": "Navigation",
       "icon": "compass"
+    }
+  ],
+
+  "tasks": [
+
+    {
+      "idTask": 1,
+      "idSessionTask": 1,
+      "nameTask": "spala vase",
+      "isDoneTask": false
+    },
+    {
+      "idTask": 2,
+      "idSessionTask": 1,
+      "nameTask": "curata cartofi",
+      "isDoneTask": true
+    },
+    {
+      "idTask": 3,
+      "idSessionTask": 1,
+      "nameTask": "taie cartofi",
+      "isDoneTask": false
+    },
+    {
+      "idTask": 4,
+      "idSessionTask": 1,
+      "nameTask": "prajeste cartofi",
+      "isDoneTask": false
+    },
+    {
+      "idTask": 5,
+      "idSessionTask": 2,
+      "nameTask": "spala vase",
+      "isDoneTask": false
+    },
+    {
+      "idTask": 6,
+      "idSessionTask": 2,
+      "nameTask": "curata cartofi",
+      "isDoneTask": true
+    },
+    {
+      "idTask": 7,
+      "idSessionTask": 2,
+      "nameTask": "taie cartofi",
+      "isDoneTask": true
+    },
+    {
+      "idTask": 8,
+      "idSessionTask": 2,
+      "nameTask": "prajeste cartofi",
+      "isDoneTask": false
+    }
+  ],
+
+  "locations": [
+    {
+      "name": "Hall 1"
+    },
+    {
+      "name": "Hall 2"
+    },
+    {
+      "name": "Hall 3"
+    },
+    {
+      "name": "Dining Hall"
+    },
+    {
+      "name": "Grand Ballroom A"
+    },
+    {
+      "name": "Grand Ballroom B"
+    }
+  ],
+
+  "invitedPeople": [
+    {
+      "idPerson": 0,
+      "idSessionPerson": 1,
+      "name": "Andrei",
+      "email": "ahututui@gmail.com"
     }
   ]
 }

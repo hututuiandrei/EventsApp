@@ -1,4 +1,4 @@
-<ion-app [class.dark-theme]="dark">
+<ion-app [class.dark-theme]="dark" [class.brown-theme]="brown">
   <ion-split-pane contentId="main-content">
 
     <ion-menu contentId="main-content">
@@ -91,6 +91,16 @@
             </ion-label>
             <ion-toggle [(ngModel)]="dark"></ion-toggle>
           </ion-item>
+
+          <ion-item>
+            <ion-icon slot="start" name="moon-outline"></ion-icon>
+            <ion-label>
+              Brown Mode
+            </ion-label>
+            <ion-toggle [(ngModel)]="brown"></ion-toggle>
+          </ion-item>
+
+
         </ion-list>
 
         <ion-list lines="none">

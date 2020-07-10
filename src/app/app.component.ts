@@ -42,6 +42,7 @@ export class AppComponent implements OnInit {
   ];
   loggedIn = false;
   dark = false;
+  brown = false;
 
   constructor(
     private menu: MenuController,
@@ -58,6 +59,9 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+    // this.storage.clear();
+
     this.checkLoginStatus();
     this.listenForLoginEvents();
 
