@@ -12,6 +12,7 @@ import {SessionDetailTasksComponent} from '../session-detail-tasks/session-detai
 import {AddTaskModal} from '../session-detail-add-task/session-detail-add-task'
 
 import {SessionDetailInvitedPeopleComponent} from '../session-detail-invited-people/session-detail-invited-people.component'
+import {SessionDetailSendEmailsComponent} from '../session-detail-send-emails/session-detail-send-emails.component'
 
 import {ReactiveFormsModule} from '@angular/forms';
 
@@ -29,6 +30,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     DoneTasksPipe,
     SessionDetailTasksComponent,
     SessionDetailInvitedPeopleComponent,
+    SessionDetailSendEmailsComponent,
     AddTaskModal
   ],
   entryComponents: [

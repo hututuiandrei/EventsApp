@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { from } from 'rxjs';
 import { map, flatMap } from 'rxjs/operators';
+import { ajax } from 'rxjs/ajax';
+import { forkJoin } from 'rxjs';
 import { Storage } from '@ionic/storage';
 
 import { UserData } from './user-data';
@@ -22,13 +24,21 @@ export class ConferenceData {
     ) {}
 
   load(): any {
-    
+
+    var remoteData = forkJoin(
+      {
+        schedule: ajax.getJSON('https://localhost:5001/api/data/schedule'),
+        speakers: ajax.getJSON('https://localhost:5001/api/data/speaker'),
+        tracks: ajax.getJSON('https://localhost:5001/api/data/track')
+      }
+    )
+
     if (this.data) {
       return of(this.data);
     } else {
       return from(this.storage.get(this.DATA_KEY)).pipe(
         flatMap((data) => {
-          return (data ? of(data) : this.http.get('assets/data/data.json'))
+          return (data ? of(data) : remoteData)
             .pipe(map(this.processData, this));
           })
       )
@@ -36,7 +46,7 @@ export class ConferenceData {
   }
 
   processData(data: any) {
-
+    
     // just some good 'ol JS fun with objects and arrays
     // build up the data by linking speakers to sessions
     this.data = data;
@@ -123,8 +133,7 @@ export class ConferenceData {
 
       return (hour == 12) ? 60 * hour + minute : 60 * 12 + 60 * hour + minute;
     } else {
-
-      return 60 * hour + minute;
+      return (hour == 12) ? minute : 60 * hour + minute;
     }
   }
 
@@ -135,12 +144,14 @@ export class ConferenceData {
     let firstZero = (min < 10 && min > 0) ? '0' : '';
     let secZero = (min == 0) ? '0' : '';
 
-    if(hour > 12) {
-      return (hour - 12).toString() + ':' + firstZero + min.toString() + secZero + " pm";
-    } else if(hour < 12) {
-      return hour.toString() + ':' + firstZero + min.toString() + secZero + " am";
-    } else {
+    if(hour == 0) {
+      return (hour + 12).toString() + ':' + firstZero + min.toString() + secZero + " am";
+    } else if (hour == 12) {
       return hour.toString() + ':' + firstZero + min.toString() + secZero + " pm";
+    } else if (hour > 12) {
+      return (hour - 12).toString() + ':' + firstZero + min.toString() + secZero + " pm";
+    } else {
+      return hour.toString() + ':' + firstZero + min.toString() + secZero + " am";
     }
   }
 
@@ -199,105 +210,87 @@ export class ConferenceData {
     return intervals;
   }
 
-  addSession(event: any) {
+  async addSession(event: any) {
 
-    this.data.schedule.forEach((day) => {
+    let session = {
 
-      let sessionsArr = day.groups.map((group) => {return group.sessions}).flat()
+      id: undefined,
+      name: event.name,
+      location: event.location,
+      description: event.description,
+      timeStart: event.timeStart,
+      timeEnd: event.timeEnd,
+      tracks: []
+    }
 
-      if (sessionsArr.every((session) => this.compareTimes(event.timeStart, session.timeEnd)
-        || this.compareTimes(session.timeStart, event.timeEnd))) {
+    let sessionsArr = this.data.schedule[0].groups.map((group) => {return group.sessions}).flat()
 
-          this.idCounterSess++;
+    if (sessionsArr.every((session) => this.compareTimes(event.timeStart, session.timeEnd)
+    || this.compareTimes(session.timeStart, event.timeEnd))) {
 
-          let trackNames = this.data.tracks.map((track) => {return track.name})
-          let randomTrackName = trackNames[Math.floor(Math.random() * trackNames.length)]
+      var resp: any = await this.http.post('https://localhost:5001/api/data/session', session).toPromise();
+      session.id = resp.id;
+      session.tracks.push(resp.track);
 
-          let session = {
+      let day = this.data.schedule[0];
 
-            hide: false,
-            name: event.name,
-            id: this.idCounterSess.toString(),
-            speakers: [],
-            tracks: [randomTrackName],
-            tasks: [],
-            location: event.location,
-            description: event.description,
-            timeStart: event.timeStart,
-            timeEnd: event.timeEnd
-          }
+      let groupIndex = day.groups.findIndex((group) => this.floorTime(event.timeStart) == group.time);
+      if(groupIndex < 0) {
 
-          let groupIndex = day.groups.findIndex((group) => this.floorTime(event.timeStart) == group.time);
+        let group = {
+          time: this.floorTime(event.timeStart),
+          sessions: [session],
+          hide: false
+        }
+        let toPlace = day.groups.findIndex((group) => this.compareTimes(group.time, event.timeStart));
 
-          if(groupIndex < 0) {
+        if(toPlace < 0) {
 
-            let group = {
-
-              time: this.floorTime(event.timeStart),
-              sessions: [session],
-              hide: false
-            }
-
-            let toPlace = day.groups.findIndex((group) => this.compareTimes(group.time, event.timeStart));
-
-            if(toPlace < 0) {
-
-              day.groups.push(group);
-            } else {
-              day.groups.splice(toPlace, 0, group);
-            }
-
-          } else {
-
-            let toPlace = day.groups[groupIndex].sessions
-              .findIndex((session) => this.compareTimes(session.timeStart, event.timeStart))
-
-            if(toPlace < 0) {
-              day.groups[groupIndex].sessions.push(session)
-            } else {
-              day.groups[groupIndex].sessions.splice(toPlace, 0, session);
-            }
-          }
+          day.groups.push(group);
+        } else {
+          day.groups.splice(toPlace, 0, group);
+        }
       } else {
+        let toPlace = day.groups[groupIndex].sessions
+          .findIndex((session) => this.compareTimes(session.timeStart, event.timeStart))
 
-        throw "Another event is already scheduled in this interval!"
+        if(toPlace < 0) {
+          day.groups[groupIndex].sessions.push(session)
+        } else {
+          day.groups[groupIndex].sessions.splice(toPlace, 0, session);
+        }
       }
+      
+    } else {
 
-    });
-
-    this.storage.set(this.DATA_KEY, this.data);
+      throw "Another event is already scheduled in this interval!"
+    }
   }
 
-  modifySession(event: any) {
+  async modifySession(event: any) {
 
-    this.deleteSession(event.id);
-    this.addSession(event);
+    await this.deleteSession(event);
+    await this.addSession(event);
   }
 
-  deleteSession(id: string) {
+  async deleteSession(event: any) {
+
+    var resp : any = await this.http.delete(`https://localhost:5001/api/data/session/${event.id}`).toPromise();
 
     var grpIndex;
-
     this.data.schedule.forEach((day) => {
-
       day.groups.forEach((group, index) => {
 
-        let sessIndex = group.sessions.findIndex((session) => session.id == id)
-
+        let sessIndex = group.sessions.findIndex((session) => session.id == event.id)
         if(sessIndex >= 0) {
-
           grpIndex = index;
           group.sessions.splice(sessIndex, 1);
         }
       })
-
       if(day.groups[grpIndex].sessions.length == 0) {
-
         day.groups.splice(grpIndex, 1);
       }
     })
-
-    this.storage.set(this.DATA_KEY, this.data);
   }
 
   filterSession(
@@ -324,6 +317,7 @@ export class ConferenceData {
 
     // if any of the sessions tracks are not in the
     // exclude tracks then this session passes the track test
+
     let matchesTracks = false;
     session.tracks.forEach((trackName: string) => {
       if (excludeTracks.indexOf(trackName) === -1) {
@@ -349,33 +343,21 @@ export class ConferenceData {
   }
 
   getInvitedPeople() {
-    return this.load().pipe(
-      map((data: any) => {
-        return data.invitedPeople;
-      })
-    )
+    return ajax.getJSON('https://localhost:5001/api/mail/getaccepted');
   }
 
   getLocations() {
-    return this.load().pipe(
-      map((data: any) => {
-        return data.locations;
-      })
-    )
+    return ajax.getJSON('https://localhost:5001/api/data/location');
   }
 
   getTasks() {
-    return this.load().pipe(
-      map((data: any) => {
-        return data.tasks;
-      })
-    )
+    return ajax.getJSON('https://localhost:5001/api/data/task');
   }
 
   getSpeakers() {
-    return this.load().pipe(
-      map((data: any) => {
-        return data.speakers.sort((a: any, b: any) => {
+    return ajax.getJSON('https://localhost:5001/api/data/speaker').pipe(
+      map((speakers: any) => {
+        return speakers.sort((a: any, b: any) => {
           const aName = a.name.split(' ').pop();
           const bName = b.name.split(' ').pop();
           return aName.localeCompare(bName);
@@ -385,9 +367,9 @@ export class ConferenceData {
   }
 
   getTracks() {
-    return this.load().pipe(
-      map((data: any) => {
-        return data.tracks.sort();
+    return ajax.getJSON('https://localhost:5001/api/data/track').pipe(
+      map((tracks: any) => {
+        return tracks.sort();
       })
     );
   }

@@ -1,7 +1,7 @@
 export class InvitedPersonModel {
 
-    idPerson: number;
-    idSessionPerson: number;
+    id: number;
+    sessionId: number;
     name: string;
     email: string;
 }

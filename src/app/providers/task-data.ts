@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 import { TaskModel } from '../interfaces/task-model'
 
@@ -14,12 +15,12 @@ export class TaskData {
 
     private allTasks: TaskModel[];
     private sessionTasks: BehaviorSubject<TaskModel[]>;
-    private idCounter: number = 0;
     private TASK_KEY = "task-key";
 
     constructor(
         public conferenceData: ConferenceData,
-        public storage: Storage
+        public storage: Storage,
+        public http: HttpClient
     ) { }
 
     getTasks() {
@@ -33,6 +34,7 @@ export class TaskData {
     }
 
     getBehaviourSubjectSessionTasks(sessionId: number) {
+
         this.sessionTasks = new BehaviorSubject([])
 
         if(this.allTasks) {
@@ -44,9 +46,9 @@ export class TaskData {
                     this.allTasks = cachedTasks;
                     this.sessionTasks.next(cachedTasks.filter((task) => task.sessionId == sessionId));
                 } else {
+
                     this.conferenceData.getTasks()
                         .pipe(map(this.processTasks, this)).subscribe((defaultTasks) => {
-
                             this.allTasks = defaultTasks;
                             this.sessionTasks.next(defaultTasks.filter((task) => task.sessionId == sessionId));
                         });
@@ -59,18 +61,16 @@ export class TaskData {
 
     processTasks(allTasks: any) {
 
-        this.allTasks = [];
+        this.allTasks = []
 
         allTasks.forEach((task) => {
 
             let newTask: TaskModel = new TaskModel();
 
-            this.idCounter = (this.idCounter < task.idTask) ? task.idTask : this.idCounter;
-
-            newTask.id = task.idTask;
-            newTask.name = task.nameTask;
-            newTask.sessionId = task.idSessionTask;
-            newTask.done = task.isDoneTask;
+            newTask.id = task.id;
+            newTask.name = task.name;
+            newTask.sessionId = task.sessionId;
+            newTask.done = task.done;
 
             this.allTasks.push(newTask);
         });
@@ -78,20 +78,19 @@ export class TaskData {
         return this.allTasks;
     }
 
-    addTask(sessionId: number, newTask: any) {
+    async addTask(sessionId: number, newTask: any) {
 
         let task: TaskModel = new TaskModel()
 
-        this.idCounter++;
-
-        task.id = this.idCounter;
         task.sessionId = sessionId;
         task.name = newTask.title;
         task.done = false;
 
-        this.allTasks.push(task);
+        var resp : any = await this.http.post("https://localhost:5001/api/data/task", task).toPromise();
 
-        this.storage.set(this.TASK_KEY, this.allTasks);
+        task.id = resp.id;
+
+        this.allTasks.push(task);
 
         this.sessionTasks.next(this.allTasks.filter((task) => task.sessionId == sessionId));
     }
@@ -100,7 +99,6 @@ export class TaskData {
 
         let taskIndex = this.allTasks.findIndex((lookedTask) => lookedTask.id == task.id)
         this.allTasks[taskIndex] = task;
-        this.storage.set(this.TASK_KEY, this.allTasks);
-
+        this.http.post("https://localhost:5001/api/data/task", task).subscribe(() => {});
     }
 }

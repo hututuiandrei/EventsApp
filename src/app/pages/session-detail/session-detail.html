@@ -29,15 +29,8 @@
   <app-session-detail-invited-people [sessionId] = "session?.id">
   </app-session-detail-invited-people>
 
-  <form [formGroup] = "invitedPersonForm" (ngSubmit)="onFormSubmit()">
-    <ion-list>
-      <ion-item>
-        <ion-label position="floating">Invite people:</ion-label>
-        <ion-input placeholder="email.." formControlName="email" type="email"></ion-input>
-        <ion-button type="submit" slot ="end">Send</ion-button>
-      </ion-item>
-    </ion-list>
-  </form>
+  <app-session-detail-send-emails (returnEmails)="sendEmails($event)">
+  </app-session-detail-send-emails>
 
   <app-session-detail-tasks [sessionId] = "session?.id">
   </app-session-detail-tasks>

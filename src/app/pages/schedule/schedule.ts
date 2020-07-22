@@ -101,7 +101,7 @@ export class SchedulePage implements OnInit {
     this.updateSchedule()
   }
 
-  async presentDeleteEventAlert(id: string) {
+  async presentDeleteEventAlert(event: any) {
 
     const alert = await this.alertCtrl.create({
       header: 'Confirm delete event',
@@ -114,7 +114,7 @@ export class SchedulePage implements OnInit {
         {
           text: 'Delete',
           handler: () => {
-            this.confData.deleteSession(id);
+            this.confData.deleteSession(event);
             this.updateSchedule();
           }
         }

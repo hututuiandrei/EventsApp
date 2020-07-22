@@ -73,17 +73,16 @@ export class AddEventPage {
         this.modalController.dismiss();
     }
 
-    dismiss(event?: any) {
+    async dismiss(event?: any) {
 
         // using the injected ModalController this page
         // can "dismiss" itself and pass back data
-
         try {
 
             if(this.modifyEvent) {
-                this.confData.modifySession(event);
+                await this.confData.modifySession(event);
             } else {
-                this.confData.addSession(event);
+                await this.confData.addSession(event);
             }
             this.modalController.dismiss();
 

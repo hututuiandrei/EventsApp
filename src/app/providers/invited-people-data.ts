@@ -3,11 +3,13 @@ import { Storage } from '@ionic/storage';
 import { map, flatMap } from 'rxjs/operators';
 
 import { from } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 import { InvitedPersonModel } from '../interfaces/invited-person-model'
 
 import { ConferenceData } from '../providers/conference-data'
 import { of, BehaviorSubject } from 'rxjs';
+
 
 @Injectable({
     providedIn: 'root'
@@ -16,12 +18,12 @@ export class InvitedPeopleData {
 
     private allInvitedPeople: InvitedPersonModel[];
     private sessionInvitedPeople: BehaviorSubject<InvitedPersonModel[]>;
-    private idCounter: number = 0;
     private INVITED_KEY = "invited-key";
 
     constructor(
         public conferenceData: ConferenceData,
-        public storage: Storage
+        public storage: Storage,
+        public http: HttpClient
     ) { }
 
     getInvitedPeople() {
@@ -45,7 +47,7 @@ export class InvitedPeopleData {
         this.getInvitedPeople().subscribe((invitedPeople: InvitedPersonModel[]) => {
 
             this.sessionInvitedPeople.next(invitedPeople
-                .filter((invitedPerson: InvitedPersonModel) => invitedPerson.idSessionPerson == sessionId));
+                .filter((invitedPerson: InvitedPersonModel) => invitedPerson.sessionId == sessionId));
         })
 
         return this.sessionInvitedPeople;
@@ -55,15 +57,17 @@ export class InvitedPeopleData {
 
         this.allInvitedPeople = [];
 
+        if(!allInvitedPeople) {
+            allInvitedPeople = [];
+        }
+
         allInvitedPeople.forEach((person: any) => {
 
             let newPerson: InvitedPersonModel = new InvitedPersonModel()
 
-            this.idCounter = (this.idCounter < person.idPerson) ? person.idPerson : this.idCounter;
-
-            newPerson.idPerson = person.idPerson;
+            newPerson.id = person.id;
             newPerson.name = person.name;
-            newPerson.idSessionPerson = person.idSessionPerson;
+            newPerson.sessionId = person.sessionId;
             newPerson.email = person.email;
 
             this.allInvitedPeople.push(newPerson);
@@ -72,30 +76,30 @@ export class InvitedPeopleData {
         return this.allInvitedPeople;
     }
 
-    addNewPerson(sessionId: number, newPerson: InvitedPersonModel) {
+    sendEmailsRequest(sessionId: number, emails: string[]) {
 
-        this.idCounter++;
-        newPerson.idPerson = this.idCounter;
-        newPerson.idSessionPerson = +sessionId;
+        var peopleList = []
+        
+        emails.forEach((email) => {
 
-        this.allInvitedPeople.push(newPerson);
+            var newPerson = new InvitedPersonModel()
+            newPerson.email = email;
+            newPerson.sessionId = sessionId;
 
-        this.storage.set(this.INVITED_KEY, this.allInvitedPeople);
+            peopleList.push(newPerson);
+        })
 
-        this.sessionInvitedPeople.next(this.allInvitedPeople
-            .filter((invitedPerson) => invitedPerson.idSessionPerson == sessionId))
+        this.http.post('https://localhost:5001/api/mail/sendmail', peopleList).subscribe(() => {})
     }
 
     deletePerson(sessionId: number, personId: number) {
 
         let personIdx = this.allInvitedPeople
-            .findIndex((person: InvitedPersonModel) => person.idPerson == personId);
+            .findIndex((person: InvitedPersonModel) => person.id == personId);
 
         this.allInvitedPeople.splice(personIdx, 1);
 
-        this.storage.set(this.INVITED_KEY, this.allInvitedPeople);
-
         this.sessionInvitedPeople.next(this.allInvitedPeople
-            .filter((invitedPerson) => invitedPerson.idSessionPerson == sessionId))
+            .filter((invitedPerson) => invitedPerson.sessionId == sessionId))
     }
 }
